@@ -23,7 +23,7 @@ redirect_from:
 <h2 id="News">News 🔥</h2>
 <div style="height:300px; overflow-y:auto;">
   <ul>
-    <li><b><font color="#FF0000">[2025.08]</font></b> <strong>One paper is </strong> accepted by <b><em>npj Computational Materials</em></b>.</li>
+    <li><b><font color="#FF0000">[2025.08]</font></b> <strong>One paper is </strong> accepted by <b><em><a href="https://www.nature.com/articles/s41524-025-01788-y" target="_blank" style="color:#2a7ce0;">npj Computational Materials</a></em></b>.</li>
 
     <li>
       <b><font color="#FF0000">[2025.08]</font></b> Excited to release:
