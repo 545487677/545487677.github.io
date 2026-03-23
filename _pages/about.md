@@ -23,6 +23,10 @@ redirect_from:
 <h2 id="News">News 🔥</h2>
 <div style="height:300px; overflow-y:auto;">
   <ul>
+    <li><b><font color="#FF0000">[2026.03]</font></b> <strong>One paper is </strong> accepted by <b><em>ICLR 2026 Workshop</em></b>. Congratulations!</li>
+
+    <li><b><font color="#FF0000">[2026.02]</font></b> Our work on <strong>Latent Poincaré Shaping for Agentic RL</strong> was featured by <a href="https://mp.weixin.qq.com/s/wS5nNRasJKkuTXtzqwzKKA" target="_blank" style="color:#2a7ce0;">机器之心 (Machine Heart)</a>!</li>
+
     <li><b><font color="#FF0000">[2025.08]</font></b> <strong>One paper is </strong> accepted by <b><em><a href="https://www.nature.com/articles/s41524-025-01788-y" target="_blank" style="color:#2a7ce0;">npj Computational Materials</a></em></b>.</li>
 
     <li>
@@ -216,6 +220,100 @@ redirect_from:
     <p>
       [<a href="https://openreview.net/forum?id=IxmWIkcKs5" target="_blank" style="color:#2a7ce0;">PDF</a>]
       [<a href="https://github.com/LirongWu/Uni-Anti" target="_blank" style="color:#2a7ce0;">Code</a>]
+    </p>
+
+  </div>
+</div>
+
+<!-- ReGuLaR -->
+<div class="pub-entry">
+  <img src="./images/papers/regular.png" alt="ReGuLaR">
+  <div class="pub-text">
+    <p><b>
+      <a href="https://openreview.net/pdf?id=m797EiKdL9" target="_blank" style="color:#2a7ce0; text-decoration:none;">
+        Variational Latent Reasoning Guided by Rendered Chain-of-Thought
+      </a>
+    </b></p>
+
+    <p><i>
+      Fanmeng Wang, Haotian Liu, <b>Guojiang Zhao</b>, Hongteng Xu, Zhifeng Gao
+    </i></p>
+
+    <p><i><b>Latent & Implicit Thinking Workshop @ ICLR, 2026</b></i></p>
+
+    <p>
+      [<a href="https://openreview.net/pdf?id=m797EiKdL9" target="_blank" style="color:#2a7ce0;">PDF</a>]
+      [<a href="https://github.com/FanmengWang/ReGuLaR" target="_blank" style="color:#2a7ce0;">Code</a>]
+    </p>
+
+  </div>
+</div>
+
+<!-- LaPha -->
+<div class="pub-entry">
+  <img src="./images/papers/lapha.png" alt="LaPha">
+  <div class="pub-text">
+    <p><b>
+      <a href="https://arxiv.org/abs/2602.09375" target="_blank" style="color:#2a7ce0; text-decoration:none;">
+        Latent Poincaré Shaping for Agentic Reinforcement Learning
+      </a>
+    </b></p>
+
+    <p><i>
+      Hanchen Xia, Baoyou Chen, Zelin Zang, Yutang Ge, <b>Guojiang Zhao</b>, Siyu Zhu
+    </i></p>
+
+    <p><i><b>arXiv preprint: 2602.09375, 2026</b></i></p>
+
+    <p>
+      [<a href="https://arxiv.org/abs/2602.09375" target="_blank" style="color:#2a7ce0;">PDF</a>]
+      [<a href="https://mp.weixin.qq.com/s/wS5nNRasJKkuTXtzqwzKKA" target="_blank" style="color:#2a7ce0;">Media Coverage</a>]
+    </p>
+
+  </div>
+</div>
+
+<!-- Innovator-VL -->
+<div class="pub-entry">
+  <img src="./images/papers/innovator.png" alt="Innovator-VL">
+  <div class="pub-text">
+    <p><b>
+      <a href="https://arxiv.org/abs/2601.19325" target="_blank" style="color:#2a7ce0; text-decoration:none;">
+        Innovator-VL: A Multimodal Large Language Model for Scientific Discovery
+      </a>
+    </b></p>
+
+    <p><i>
+      Zichen Wen, Boxue Yang, Shuang Chen, et al. (with <b>Guojiang Zhao</b>)
+    </i></p>
+
+    <p><i><b>arXiv preprint: 2601.19325, 2026</b></i></p>
+
+    <p>
+      [<a href="https://arxiv.org/abs/2601.19325" target="_blank" style="color:#2a7ce0;">PDF</a>]
+    </p>
+
+  </div>
+</div>
+
+<!-- T-star -->
+<div class="pub-entry">
+  <img src="./images/papers/tstar.png" alt="T-star">
+  <div class="pub-text">
+    <p><b>
+      <a href="https://arxiv.org/abs/2601.11214" target="_blank" style="color:#2a7ce0; text-decoration:none;">
+        T<sup>⋆</sup>: Progressive Block Scaling for Masked Diffusion Language Models Through Trajectory Aware Reinforcement Learning
+      </a>
+    </b></p>
+
+    <p><i>
+      Hanchen Xia, Baoyou Chen, Yutang Ge, <b>Guojiang Zhao</b>, Siyu Zhu
+    </i></p>
+
+    <p><i><b>arXiv preprint: 2601.11214, 2026</b></i></p>
+
+    <p>
+      [<a href="https://arxiv.org/abs/2601.11214" target="_blank" style="color:#2a7ce0;">PDF</a>]
     </p>
 
   </div>
