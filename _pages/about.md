@@ -25,7 +25,7 @@ redirect_from:
   <ul>
     <li><b><font color="#FF0000">[2026.03]</font></b> <strong>One paper is </strong> accepted by <b><em>ICLR 2026 Workshop</em></b>. Congratulations!</li>
 
-    <li><b><font color="#FF0000">[2026.02]</font></b> Our work on <strong>Latent Poincaré Shaping for Agentic RL</strong> was featured by <a href="https://mp.weixin.qq.com/s/wS5nNRasJKkuTXtzqwzKKA" target="_blank" style="color:#2a7ce0;">机器之心 (Machine Heart)</a>!</li>
+    <li><b><font color="#FF0000">[2026.02]</font></b> Our work on <strong>Latent Poincaré Shaping for Agentic RL</strong> was featured by <a href="https://mp.weixin.qq.com/s/wS5nNRasJKkuTXtzqwzKKA" target="_blank" style="color:#2a7ce0;">机器之心</a>!</li>
 
     <li><b><font color="#FF0000">[2025.08]</font></b> <strong>One paper is </strong> accepted by <b><em><a href="https://www.nature.com/articles/s41524-025-01788-y" target="_blank" style="color:#2a7ce0;">npj Computational Materials</a></em></b>.</li>
 
