@@ -521,7 +521,8 @@ redirect_from:
 <h2 id="services">🤝 Academic Services</h2>
 
 <ul>
-  <li><b>Program Committee Member | Reviewer</b> — AAAI Conference on Artificial Intelligence (<b>AAAI</b>)</li>
+  <li><b>Reviewer (Conference)</b> — ICLR, ICML, ACL, AAAI (CCF-A)</li>
+  <li><b>Reviewer (Journal)</b> — Archives of Computational Methods in Engineering (JCR Q1, Impact Factor 11.9)</li>
 </ul>
 
 <h2 id="standards">📑 Standards</h2>
