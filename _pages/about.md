@@ -521,7 +521,7 @@ redirect_from:
 <h2 id="services">🤝 Academic Services</h2>
 
 <ul>
-  <li><b>Reviewer (Conference)</b> — ICLR, ICML, ACL, AAAI (CCF-A)</li>
+  <li><b>Reviewer (Conference)</b> — ICLR(CCF-A), ICML(CCF-A), ACL(CCF-A), AAAI(CCF-A) </li>
   <li><b>Reviewer (Journal)</b> — Archives of Computational Methods in Engineering (JCR Q1, Impact Factor 11.9)</li>
 </ul>
 
