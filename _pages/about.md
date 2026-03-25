@@ -23,6 +23,8 @@ redirect_from:
 <h2 id="News">News 🔥</h2>
 <div style="height:300px; overflow-y:auto;">
   <ul>
+    <li><b><font color="#FF0000">[2026.03]</font></b> We propose <strong>SpecXMaster</strong>, an intelligent framework leveraging Agentic Reinforcement Learning (RL) for NMR molecular spectral interpretation.</li>
+
     <li><b><font color="#FF0000">[2026.03]</font></b> <strong>One paper is </strong> accepted by <b><em>ICLR 2026 Workshop</em></b>. Congratulations!</li>
 
     <li><b><font color="#FF0000">[2026.02]</font></b> Our work on <strong>Latent Poincaré Shaping for Agentic RL</strong> was featured by <a href="https://mp.weixin.qq.com/s/wS5nNRasJKkuTXtzqwzKKA" target="_blank" style="color:#2a7ce0;">机器之心</a>!</li>
@@ -145,6 +147,25 @@ redirect_from:
 
     <p>
       [<a href="https://pubs.acs.org/doi/abs/10.1021/acs.jcim.5c00291" target="_blank" style="color:#2a7ce0;">PDF</a>]
+    </p>
+
+  </div>
+</div>
+
+<!-- SpecXMaster -->
+<div class="pub-entry">
+  <img src="./images/papers/spexmaster.png" alt="SpecXMaster">
+  <div class="pub-text">
+    <p><b><a href="https://arxiv.org/pdf/2603.23101" target="_blank" style="color:#2a7ce0; text-decoration:none;">
+      SpecXMaster Technical Report
+    </a></b></p>
+
+    <p><i>Yutang Ge, Yaning Cui, Hanzheng Li, Jun-Jie Wang, Fanjie Xu, Jinhan Dong, Yongqi Jin, Dongxu Cui, Peng Jin, <b>Guojiang Zhao</b>, Hengxing Cai, Rong Zhu, Linfeng Zhang, Xiaohong Ji, Zhifeng Gao</i></p>
+
+    <p><i><b>arXiv preprint: 2603.23101, 24 Mar 2026</b></i></p>
+
+    <p>
+      [<a href="https://arxiv.org/pdf/2603.23101" target="_blank" style="color:#2a7ce0;">PDF</a>]
     </p>
 
   </div>
