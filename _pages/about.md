@@ -22,7 +22,8 @@ redirect_from:
 
 <h2 id="News">News 🔥</h2>
 <div style="height:300px; overflow-y:auto;">
-  <ul>
+  <ul>  
+    <li><b><font color="#FF0000">[2026.04]</font></b> <strong>Two papers are</strong> accepted by <b><em>ACL</em></b> (<b>1</b> main conference, <b>1</b> Findings).</li>
     <li><b><font color="#FF0000">[2026.03]</font></b> We propose <strong>SpecXMaster</strong>, an intelligent framework leveraging Agentic Reinforcement Learning (RL) for NMR molecular spectral interpretation.</li>
 
     <li><b><font color="#FF0000">[2026.03]</font></b> <strong>One paper is </strong> accepted by <b><em>ICLR 2026 Workshop</em></b>. Congratulations!</li>
