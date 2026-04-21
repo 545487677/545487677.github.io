@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guojiang Zhao — LLM · Agents · AI4S</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:       #0a0a08;
+  --bg2:      #111110;
+  --bg3:      #181816;
+  --panel:    #131311;
+  --border:   rgba(220,185,100,0.18);
+  --border2:  rgba(220,185,100,0.08);
+  --amber:    #dbb96a;
+  --amber2:   #f0d080;
+  --amber3:   #b8943a;
+  --green:    #6db88a;
+  --blue:     #7aaccc;
+  --red:      #c96a5a;
+  --text:     #d4c9a8;
+  --text2:    #8a7d5c;
+  --text3:    #4a4336;
+  --white:    #f0e8d0;
+  --mono:     'IBM Plex Mono', monospace;
+  --serif:    'Instrument Serif', serif;
+  --sans:     'DM Sans', sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.75;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+  pointer-events: none; z-index: 0; opacity: 0.6;
+}
+
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(10,10,8,0.92);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border2);
+}
+.nav-inner {
+  max-width: 1100px; margin: 0 auto; padding: 0 28px;
+  height: 52px; display: flex; align-items: center; justify-content: space-between;
+}
+.nav-id {
+  font-family: var(--mono); font-size: 12px; color: var(--amber);
+  display: flex; align-items: center; gap: 10px;
+}
+.nav-id::before { content: '▶'; font-size: 8px; animation: blink 1.2s step-end infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+.nav-links { display: flex; gap: 28px; list-style: none; }
+.nav-links a {
+  font-family: var(--mono); font-size: 11px; color: var(--text2);
+  text-decoration: none; letter-spacing: 0.08em; text-transform: uppercase; transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--amber); }
+
+.wrap { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 0 28px; }
+
+/* HERO */
+.hero {
+  padding-top: 100px; padding-bottom: 72px;
+  display: grid; grid-template-columns: 1fr 340px; gap: 56px; align-items: start;
+}
+
+.terminal-window {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 8px; overflow: hidden;
+  box-shadow: 0 0 60px rgba(219,185,106,0.06), 0 20px 60px rgba(0,0,0,0.5);
+  position: sticky; top: 72px;
+}
+.terminal-bar {
+  background: var(--bg3); padding: 10px 16px;
+  display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--border2);
+}
+.dot { width: 11px; height: 11px; border-radius: 50%; }
+.dot-r { background: #c96a5a; } .dot-y { background: #c9a85a; } .dot-g { background: #6db88a; }
+.terminal-title {
+  font-family: var(--mono); font-size: 11px; color: var(--text3);
+  margin-left: auto; margin-right: auto; letter-spacing: 0.06em;
+}
+.terminal-body {
+  padding: 20px; font-family: var(--mono); font-size: 12.5px;
+  line-height: 1.9; min-height: 380px;
+}
+.t-prompt { color: var(--amber3); }
+.t-cmd { color: var(--amber); }
+.t-key { color: var(--blue); }
+.t-str { color: var(--green); }
+.t-dim { color: var(--text3); }
+.t-tag { color: var(--red); }
+.t-num { color: #c89ad0; }
+.t-line { display: block; }
+.cursor {
+  display: inline-block; width: 8px; height: 14px; background: var(--amber);
+  vertical-align: text-bottom; animation: blink 1s step-end infinite; margin-left: 2px;
+}
+.t-typed { overflow: hidden; white-space: nowrap; display: inline-block; }
+.t-typed-1 { animation: typeIn 0.5s steps(28) 0.3s both; }
+.t-typed-2 { animation: typeIn 0.7s steps(38) 1.0s both; }
+.t-typed-3 { animation: typeIn 0.5s steps(22) 1.9s both; }
+.t-typed-4 { animation: typeIn 0.8s steps(42) 2.6s both; }
+.t-typed-5 { animation: typeIn 0.5s steps(22) 3.6s both; }
+.t-typed-6 { animation: typeIn 0.7s steps(32) 4.3s both; }
+.t-fade    { animation: fadeUp 0.3s ease 5.2s both; }
+@keyframes typeIn { from { width: 0; } to { width: 100%; } }
+
+/* HERO TEXT */
+.hero-eyebrow {
+  font-family: var(--mono); font-size: 11px; color: var(--amber3);
+  letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 18px;
+  display: flex; align-items: center; gap: 12px;
+}
+.hero-eyebrow span { color: var(--text3); }
+.hero-name {
+  font-family: var(--serif);
+  font-size: clamp(52px, 6.5vw, 88px);
+  line-height: 0.92; letter-spacing: -0.01em; color: var(--white); margin-bottom: 6px;
+}
+.hero-name em { font-style: italic; color: transparent; -webkit-text-stroke: 1px var(--amber); }
+.hero-subtitle {
+  font-family: var(--mono); font-size: 12px; color: var(--text2);
+  letter-spacing: 0.06em; margin-bottom: 28px; line-height: 1.8;
+}
+.hero-subtitle .hi { color: var(--green); }
+.hero-bio {
+  font-size: 16px; font-weight: 300; color: var(--text); line-height: 1.85;
+  max-width: 520px; margin-bottom: 12px;
+}
+.hero-bio strong { color: var(--white); font-weight: 500; }
+.hero-bio em { font-style: italic; color: var(--amber); }
+.hero-links { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 24px; }
+.hlink {
+  display: inline-flex; align-items: center; gap: 7px; padding: 7px 16px;
+  font-family: var(--mono); font-size: 11px; color: var(--text2); text-decoration: none;
+  border: 1px solid var(--border2); border-radius: 3px; background: var(--bg2);
+  letter-spacing: 0.06em; transition: all 0.18s;
+}
+.hlink:hover { color: var(--amber); border-color: var(--border); background: rgba(219,185,106,0.05); }
+.hlink svg { width: 13px; height: 13px; flex-shrink: 0; }
+
+/* STATS */
+.stats-row {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  border: 1px solid var(--border2); border-radius: 6px; overflow: hidden; margin-bottom: 72px;
+}
+.stat-cell { padding: 22px 24px; background: var(--panel); border-right: 1px solid var(--border2); }
+.stat-cell:last-child { border-right: none; }
+.s-num {
+  font-family: var(--serif); font-size: 40px; font-style: italic;
+  color: var(--amber2); line-height: 1; display: block; margin-bottom: 4px;
+}
+.s-lbl { font-family: var(--mono); font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.1em; }
+
+/* SECTIONS */
+.sec-head { display: flex; align-items: center; gap: 16px; margin-bottom: 32px; }
+.sec-tag {
+  font-family: var(--mono); font-size: 10px; color: var(--amber3);
+  letter-spacing: 0.2em; text-transform: uppercase; white-space: nowrap;
+  padding: 4px 10px; border: 1px solid rgba(219,185,106,0.2); border-radius: 2px;
+}
+.sec-line { flex: 1; height: 1px; background: var(--border2); }
+.section { margin-bottom: 72px; }
+
+/* NEWS */
+.news-list { display: flex; flex-direction: column; gap: 2px; }
+.news-row {
+  display: grid; grid-template-columns: 90px 1fr; gap: 24px; align-items: baseline;
+  padding: 14px 16px; border-radius: 4px; transition: background 0.15s; position: relative;
+}
+.news-row::before {
+  content: ''; position: absolute; left: 0; top: 8px; bottom: 8px;
+  width: 2px; background: transparent; border-radius: 2px; transition: background 0.15s;
+}
+.news-row:hover { background: rgba(219,185,106,0.04); }
+.news-row:hover::before { background: var(--amber3); }
+.n-date { font-family: var(--mono); font-size: 11px; color: var(--text3); letter-spacing: 0.06em; }
+.n-body { font-size: 15px; color: var(--text); font-weight: 300; line-height: 1.6; }
+.n-body strong { color: var(--white); font-weight: 500; }
+.badge {
+  display: inline-block; padding: 1px 7px; border-radius: 2px;
+  font-family: var(--mono); font-size: 9px; font-weight: 600;
+  letter-spacing: 0.08em; text-transform: uppercase; margin-right: 7px; vertical-align: middle;
+}
+.b-acl  { background: rgba(109,184,138,0.15); color: var(--green); }
+.b-iclr { background: rgba(122,172,204,0.15); color: var(--blue); }
+.b-pre  { background: rgba(219,185,106,0.12); color: var(--amber3); }
+.b-jour { background: rgba(201,106,90,0.15);  color: var(--red); }
+.b-media{ background: rgba(180,120,220,0.15); color: #b87ae0; }
+.b-oral { background: rgba(201,106,90,0.18);  color: var(--red); border: 1px solid rgba(201,106,90,0.3); }
+
+/* PUBLICATIONS */
+.pub-list { display: flex; flex-direction: column; gap: 12px; }
+.pub-card {
+  background: var(--panel); border: 1px solid var(--border2); border-radius: 6px;
+  padding: 24px 28px; display: flex; gap: 24px; transition: border-color 0.2s; position: relative;
+}
+.pub-card::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+  width: 3px; background: transparent; border-radius: 6px 0 0 6px; transition: background 0.2s;
+}
+.pub-card:hover { border-color: var(--border); }
+.pub-card:hover::before { background: var(--amber3); }
+.pub-card.feat { border-color: rgba(219,185,106,0.22); }
+.pub-card.feat::before { background: var(--amber); }
+.pub-year {
+  font-family: var(--mono); font-size: 11px; color: var(--text3);
+  min-width: 44px; padding-top: 3px; letter-spacing: 0.06em; flex-shrink: 0;
+}
+.pub-body { flex: 1; }
+.pub-chips { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; align-items: center; }
+.vc {
+  padding: 2px 8px; border-radius: 2px; font-family: var(--mono); font-size: 10px;
+  font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
+}
+.vc-iclr { background: rgba(122,172,204,0.15); color: var(--blue); }
+.vc-acl  { background: rgba(109,184,138,0.15); color: var(--green); }
+.vc-jour { background: rgba(201,106,90,0.15);  color: var(--red); }
+.vc-pre  { background: rgba(100,100,90,0.15);  color: var(--text3); }
+.vc-spot { background: rgba(219,185,106,0.15); color: var(--amber); border: 1px solid rgba(219,185,106,0.25); }
+.vc-oral { background: rgba(201,106,90,0.15);  color: var(--red); }
+.pub-title { font-family: var(--serif); font-style: italic; font-size: 19px; color: var(--white); line-height: 1.3; margin-bottom: 8px; }
+.pub-authors { font-size: 13.5px; color: var(--text2); font-weight: 300; margin-bottom: 14px; line-height: 1.6; }
+.pub-authors strong { color: var(--amber); font-weight: 500; }
+.pub-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.pa {
+  padding: 4px 12px; border-radius: 2px; font-family: var(--mono); font-size: 10px;
+  color: var(--text2); text-decoration: none; border: 1px solid var(--border2);
+  letter-spacing: 0.06em; transition: all 0.15s; text-transform: uppercase;
+}
+.pa:hover { color: var(--amber); border-color: var(--border); background: rgba(219,185,106,0.05); }
+.pa.pa-p { color: var(--amber3); border-color: rgba(219,185,106,0.25); }
+
+/* SERVICES */
+.services-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+.srv-panel { background: var(--panel); border: 1px solid var(--border2); border-radius: 6px; padding: 22px 24px; }
+.srv-title {
+  font-family: var(--mono); font-size: 10px; color: var(--amber3);
+  text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 16px;
+  padding-bottom: 10px; border-bottom: 1px solid var(--border2);
+}
+.srv-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.srv-list li { font-size: 14px; color: var(--text); font-weight: 300; padding-left: 14px; position: relative; line-height: 1.5; }
+.srv-list li::before { content: '–'; position: absolute; left: 0; color: var(--amber3); font-family: var(--mono); }
+.srv-meta { display: block; font-family: var(--mono); font-size: 10px; color: var(--text3); margin-top: 2px; }
+
+footer {
+  border-top: 1px solid var(--border2); padding: 36px 0; margin-top: 40px;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.ft-l { font-family: var(--mono); font-size: 12px; color: var(--text3); }
+.ft-l strong { color: var(--amber3); }
+.ft-r { font-family: var(--mono); font-size: 11px; color: var(--text3); }
+
+@keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+.hero { animation: fadeUp 0.7s ease both; }
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--text3); border-radius: 3px; }
+
+@media (max-width: 768px) {
+  .hero { grid-template-columns: 1fr; padding-top: 80px; }
+  .terminal-window { display: none; }
+  .stats-row { grid-template-columns: 1fr 1fr; }
+  .services-grid { grid-template-columns: 1fr; }
+  .nav-links { display: none; }
+  .pub-card { flex-direction: column; }
+  .pub-img { display: none; }
+}
+
+/* PUB IMAGE */
+.pub-img {
+  width: 130px;
+  flex-shrink: 0;
+  align-self: flex-start;
+}
+.pub-img img {
+  width: 130px;
+  height: 96px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid var(--border2);
+  display: block;
+  background: var(--bg3);
+  transition: border-color 0.2s;
+}
+.pub-card:hover .pub-img img {
+  border-color: var(--border);
+}
+@media (max-width: 768px) {
+  .pub-img { display: none; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <div class="nav-id">GUOJIANG_ZHAO.AGENT</div>
+    <ul class="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#news">News</a></li>
+      <li><a href="#publications">Papers</a></li>
+      <li><a href="#services">Service</a></li>
+      <li><a href="mailto:cody545487677@gmail.com">Contact</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="wrap">
+
+  <section class="hero" id="about">
+    <div>
+      <div style="display:flex;align-items:center;gap:18px;margin-bottom:20px;">
+        <img src="https://545487677.github.io/images/profile.png" alt="Guojiang Zhao"
+          style="width:64px;height:64px;border-radius:50%;object-fit:cover;border:2px solid var(--border);flex-shrink:0;"
+          onerror="this.style.display='none'">
+        <div>
+          <div class="hero-eyebrow" style="margin-bottom:4px;">Researcher @ DP Technology <span>// Beijing, China</span></div>
+          <div style="font-family:var(--mono);font-size:11px;color:var(--text3);">cody545487677@gmail.com</div>
+        </div>
+      </div>
+      <h1 class="hero-name">Guojiang<br><em>Zhao</em></h1>
+      <div class="hero-subtitle">
+        <span class="hi">LLM Reasoning</span> · Self-Evolving Agents · AI for Science<br>
+        M.S. Carnegie Mellon University &nbsp;·&nbsp; B.S. XUPT (Ranked 1st)
+      </div>
+      <p class="hero-bio">
+        Working at <strong>DP Technology</strong>, mentored by <strong>Zhifeng Gao</strong> &amp; <strong>Guolin Ke</strong>.
+        My current research focuses on <em>LLM-driven reasoning frameworks</em> and <em>multi-agent systems</em>
+        for intelligent scientific discovery — bridging language models and molecular design.
+      </p>
+      <p class="hero-bio" style="font-size:15px; color:var(--text2); font-style:italic;">
+        Visiting experience at NUS and the Stan Z. Li Lab @ Westlake. Previously at WeChat (Tencent) &amp; Huawei.
+        Open to collaborations on LLM reasoning, agentic RL, and AI4S.
+      </p>
+      <div class="hero-links">
+        <a href="mailto:cody545487677@gmail.com" class="hlink">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 7 10-7"/></svg>Email
+        </a>
+        <a href="https://scholar.google.com/citations?user=uuqNt9cAAAAJ&hl=US" class="hlink">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg>Scholar
+        </a>
+        <a href="https://github.com/545487677" class="hlink">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>GitHub
+        </a>
+        <a href="https://linkedin.com" class="hlink">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>LinkedIn
+        </a>
+      </div>
+    </div>
+
+    <!-- TERMINAL CARD -->
+    <div class="terminal-window">
+      <div class="terminal-bar">
+        <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
+        <div class="terminal-title">agent_profile.py — running</div>
+      </div>
+      <div class="terminal-body">
+        <span class="t-line"><span class="t-prompt">❯ </span><span class="t-cmd t-typed t-typed-1">python agent_profile.py</span></span>
+        <span class="t-line"><span class="t-dim t-typed t-typed-2"># Initializing researcher profile...</span></span>
+        <span class="t-line">&nbsp;</span>
+        <span class="t-line"><span class="t-key t-typed t-typed-3">name</span><span class="t-dim"> = </span><span class="t-str t-typed t-typed-4">"Guojiang Zhao (Cody)"</span></span>
+        <span class="t-line"><span class="t-key t-typed t-typed-5">role</span><span class="t-dim"> = </span><span class="t-str t-typed t-typed-6">"Researcher @ DP Technology"</span></span>
+        <span class="t-line t-fade"><span class="t-key">focus</span><span class="t-dim"> = [</span></span>
+        <span class="t-line t-fade">&nbsp;&nbsp;<span class="t-str">"LLM Reasoning"</span><span class="t-dim">,</span></span>
+        <span class="t-line t-fade">&nbsp;&nbsp;<span class="t-str">"Self-Evolving Agents"</span><span class="t-dim">,</span></span>
+        <span class="t-line t-fade">&nbsp;&nbsp;<span class="t-str">"Agentic RL"</span><span class="t-dim">,</span></span>
+        <span class="t-line t-fade">&nbsp;&nbsp;<span class="t-str">"AI for Science"</span><span class="t-dim">,</span></span>
+        <span class="t-line t-fade"><span class="t-dim">]</span></span>
+        <span class="t-line">&nbsp;</span>
+        <span class="t-line t-fade"><span class="t-key">papers</span><span class="t-dim">   = </span><span class="t-num">24</span><span class="t-dim">  </span><span class="t-tag"># incl. ICLR Spotlight, ACL×3</span></span>
+        <span class="t-line t-fade"><span class="t-key">1st_auth</span><span class="t-dim"> = </span><span class="t-num">8</span><span class="t-dim">   </span><span class="t-tag"># first / co-first author</span></span>
+        <span class="t-line t-fade"><span class="t-key">patents</span><span class="t-dim">  = </span><span class="t-num">14</span></span>
+        <span class="t-line t-fade"><span class="t-key">edu</span><span class="t-dim">      = </span><span class="t-str">"CMU M.S. · XUPT B.S. #1"</span></span>
+        <span class="t-line">&nbsp;</span>
+        <span class="t-line t-fade"><span class="t-prompt">❯ </span><span class="t-cmd">_</span><span class="cursor"></span></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <div class="stats-row">
+    <div class="stat-cell"><span class="s-num">24</span><span class="s-lbl">Publications</span></div>
+    <div class="stat-cell"><span class="s-num">10+</span><span class="s-lbl">CCF-A / SCI Q1</span></div>
+    <div class="stat-cell"><span class="s-num">8</span><span class="s-lbl">First / Co-First</span></div>
+    <div class="stat-cell"><span class="s-num">14</span><span class="s-lbl">Patents</span></div>
+  </div>
+
+  <!-- NEWS -->
+  <section class="section" id="news">
+    <div class="sec-head"><div class="sec-tag">Recent Updates</div><div class="sec-line"></div></div>
+    <div class="news-list">
+      <div class="news-row">
+        <div class="n-date">2026.04</div>
+        <div class="n-body"><span class="badge b-acl">ACL</span>Two papers accepted — 1 main conference, 1 Findings. 🎉</div>
+      </div>
+      <div class="news-row">
+        <div class="n-date">2026.03</div>
+        <div class="n-body"><span class="badge b-pre">Preprint</span>Proposing <strong>SpecXMaster</strong> — Agentic RL for NMR molecular spectral interpretation.</div>
+      </div>
+      <div class="news-row">
+        <div class="n-date">2026.03</div>
+        <div class="n-body"><span class="badge b-iclr">ICLR WS</span>One paper accepted at ICLR 2026 Workshop.</div>
+      </div>
+      <div class="news-row">
+        <div class="n-date">2026.02</div>
+        <div class="n-body"><span class="badge b-media">Media</span><em>Latent Poincaré Shaping for Agentic RL</em> featured by 机器之心.</div>
+      </div>
+      <div class="news-row">
+        <div class="n-date">2025.08</div>
+        <div class="n-body"><span class="badge b-jour">npj CompMat</span>Paper accepted — SCI Q1, Impact Factor 13.0.</div>
+      </div>
+      <div class="news-row">
+        <div class="n-date">2025.08</div>
+        <div class="n-body"><span class="badge b-pre">Release</span>Released <strong>MolReasoner</strong> — two-stage (Mol-SFT + Mol-RL) framework for interpretable molecular reasoning.</div>
+      </div>
+      <div class="news-row">
+        <div class="n-date">2025.06</div>
+        <div class="n-body"><span class="badge b-acl">ACL WS</span><span class="badge b-oral">Oral</span><strong>R³</strong> (consensus-based multi-agent Text-to-SQL) accepted at TRL@ACL 2025.</div>
+      </div>
+      <div class="news-row">
+        <div class="n-date">2025.02</div>
+        <div class="n-body"><span class="badge b-iclr">ICLR 2025</span><strong>CBGBench</strong> accepted as <strong>Spotlight</strong> 🔦 — 371/11,672 submissions.</div>
+      </div>
+      <div class="news-row">
+        <div class="n-date">2024.09</div>
+        <div class="n-body"><span class="badge b-jour">TNNLS</span>One paper accepted (SCI Q1, IF 8.9, CCF-B).</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PUBLICATIONS -->
+  <section class="section" id="publications">
+    <div class="sec-head"><div class="sec-tag">Selected Publications</div><div class="sec-line"></div></div>
+    <div class="pub-list">
+
+      <!-- MolReasoner -->
+      <div class="pub-card feat">
+        <div class="pub-img"><img src="https://545487677.github.io/images/papers/molreasoner.png" alt="MolReasoner"></div>
+        <div class="pub-body">
+          <div class="pub-chips"><span class="vc vc-pre">arXiv 2025</span><span style="font-family:var(--mono);font-size:10px;color:var(--text3);">LLM Reasoning · AI4S</span></div>
+          <div class="pub-title">MolReasoner: Toward Effective and Interpretable Reasoning for Molecular LLMs</div>
+          <div class="pub-authors"><strong>Guojiang Zhao*</strong>, Sihang Li*, Zixiang Lu, Zheng Cheng, Haitao Lin, Lirong Wu, Hanchen Xia, Hengxing Cai, Wentao Guo, Hongshuai Wang, Mingjun Xu, Siyu Zhu, Guolin Ke, Linfeng Zhang, Zhifeng Gao</div>
+          <div class="pub-actions"><a href="https://arxiv.org/pdf/2508.02066" class="pa pa-p" target="_blank">PDF</a><a href="https://github.com/545487677/MolReasoner" class="pa" target="_blank">Code</a></div>
+        </div>
+      </div>
+
+      <!-- OCNet npj -->
+      <div class="pub-card feat">
+        <div class="pub-img"><img src="https://545487677.github.io/images/papers/OCNet.png" alt="OCNet"></div>
+        <div class="pub-body">
+          <div class="pub-chips"><span class="vc vc-jour">npj Comp. Materials 2025</span><span style="font-family:var(--mono);font-size:10px;color:var(--text3);">SCI Q1 · IF 13.0</span></div>
+          <div class="pub-title">Virtual Characterization via Knowledge-Enhanced Representation Learning: from Organic Conjugated Molecules to Devices</div>
+          <div class="pub-authors"><strong>Guojiang Zhao*</strong>, Qi Ou*, Zifeng Zhao*, Shangqian Chen, Haitao Lin, Xiaohong Ji, Zhen Wang, Hongshuai Wang, Hengxing Cai, Lirong Wu, Shuqi Lu, FengTianCi Yang, Yaping Wen, Yingfeng Zhang, Haibo Ma, Zhifeng Gao, Zheng Cheng</div>
+          <div class="pub-actions"><a href="https://chemrxiv.org/engage/api-gateway/chemrxiv/assets/orp/resource/item/67ffb41a50018ac7c5a45d5b/original/virtual-characterization-via-knowledge-enhanced-representation-learning-from-organic-conjugated-molecules-to-devices.pdf" class="pa pa-p" target="_blank">PDF</a><a href="https://github.com/545487677/OCNet" class="pa" target="_blank">Code</a></div>
+        </div>
+      </div>
+
+      <!-- JCIM -->
+      <div class="pub-card feat">
+        <div class="pub-img"><img src="https://545487677.github.io/images/papers/JCIM.png" alt="JCIM"></div>
+        <div class="pub-body">
+          <div class="pub-chips"><span class="vc vc-jour">JCIM 2025</span><span style="font-family:var(--mono);font-size:10px;color:var(--text3);">SCI Q1 · IF 5.3</span></div>
+          <div class="pub-title">Data-Driven Parametrization of All-Atom Force Fields for Organic Semiconductors</div>
+          <div class="pub-authors"><strong>Guojiang Zhao*</strong>, Taiping Hu, Hongshuai Wang, Lirong Wu, Shuqi Lu, FengTianCi Yang, Shangqian Chen, Zhifeng Gao, Xinyan Wang, Zheng Cheng</div>
+          <div class="pub-actions"><a href="https://pubs.acs.org/doi/abs/10.1021/acs.jcim.5c00291" class="pa pa-p" target="_blank">PDF</a></div>
+        </div>
+      </div>
+
+      <!-- SpecXMaster -->
+      <div class="pub-card">
+        <div class="pub-img"><img src="https://545487677.github.io/images/papers/spexmaster.png" alt="SpecXMaster"></div>
+        <div class="pub-body">
+          <div class="pub-chips"><span class="vc vc-pre">arXiv 2026</span><span style="font-family:var(--mono);font-size:10px;color:var(--text3);">Agentic RL · NMR</span></div>
+          <div class="pub-title">SpecXMaster Technical Report</div>
+          <div class="pub-authors">Yutang Ge, Yaning Cui, Hanzheng Li, Jun-Jie Wang, Fanjie Xu, Jinhan Dong, Yongqi Jin, Dongxu Cui, Peng Jin, <strong>Guojiang Zhao</strong>, Hengxing Cai, Rong Zhu, Linfeng Zhang, Xiaohong Ji, Zhifeng Gao</div>
+          <div class="pub-actions"><a href="https://arxiv.org/pdf/2603.23101" class="pa pa-p" target="_blank">PDF</a></div>
+        </div>
+      </div>
+
+      <!-- O2-GEN -->
+      <div class="pub-card feat">
+        <div class="pub-img"><img src="https://545487677.github.io/images/papers/o2gen.png" alt="O2-GEN"></div>
+        <div class="pub-body">
+          <div class="pub-chips"><span class="vc vc-pre">ChemRxiv 2025</span><span style="font-family:var(--mono);font-size:10px;color:var(--text3);">Molecular Design · AI4S</span></div>
+          <div class="pub-title">Fast and Flexible 3D Molecule Design Framework for Novel Organic Optoelectronic Materials</div>
+          <div class="pub-authors"><strong>Guojiang Zhao*</strong>, Zheng Cheng*, Kele Xu, Tianjiao Wan, Ming Feng, Shuqi Lu, Hongshuai Wang, Zijian Gao, Qi Ou, Liang Hu, Dawei Feng, Zifeng Zhao, Zhifeng Gao</div>
+          <div class="pub-actions"><a href="https://chemrxiv.org/engage/chemrxiv/article-details/68a4c2bb23be8e43d6ee37d5" class="pa pa-p" target="_blank">PDF</a><a href="https://zenodo.org/records/14915202" class="pa" target="_blank">Code</a></div>
+        </div>
+      </div>
+
+      <!-- CBGBench Spotlight -->
+      <div class="pub-card feat">
+        <div class="pub-img"><img src="https://545487677.github.io/images/papers/cgbbench.png" alt="CBGBench"></div>
+        <div class="pub-body">
+          <div class="pub-chips"><span class="vc vc-iclr">ICLR 2025</span><span class="vc vc-spot">★ Spotlight</span></div>
+          <div class="pub-title">CBGBench: Fill in the Blank of Protein-Molecule Complex Binding Graph</div>
+          <div class="pub-authors">Haitao Lin*, <strong>Guojiang Zhao*</strong>, Odin Zhang, Yufei Huang, Lirong Wu, Zicheng Liu, Siyuan Li, Cheng Tan, Zhifeng Gao, Stan Z. Li</div>
+          <div class="pub-actions"><a href="https://openreview.net/forum?id=mOpNrrV2zH" class="pa pa-p" target="_blank">PDF</a><a href="https://github.com/EDAPINENUT/CBGBench" class="pa" target="_blank">Code</a></div>
+        </div>
+      </div>
+
+      <!-- ICLR 2025 DDG -->
+      <div class="pub-card">
+        <div class="pub-img"><img src="https://545487677.github.io/images/papers/ICLR_2025_UniAnti_cover.PNG" alt="UniAnti"></div>
+        <div class="pub-body">
+          <div class="pub-chips"><span class="vc vc-iclr">ICLR 2025</span></div>
+          <div class="pub-title">A Simple yet Effective DDG Predictor is An Unsupervised Antibody Optimizer and Explainer</div>
+          <div class="pub-authors">Lirong Wu, Yunfan Liu, Haitao Lin, Yufei Huang, <strong>Guojiang Zhao</strong>, Zhifeng Gao, Stan Z. Li</div>
+          <div class="pub-actions"><a href="https://openreview.net/forum?id=IxmWIkcKs5" class="pa pa-p" target="_blank">PDF</a><a href="https://github.com/LirongWu/Uni-Anti" class="pa" target="_blank">Code</a></div>
+        </div>
+      </div>
+
+      <!-- ReGuLaR ICLR 2026 WS -->
+      <div class="pub-card">
+        <div class="pub-img"><img src="https://545487677.github.io/images/papers/regular.png" alt="ReGuLaR"></div>
+        <div class="pub-body">
+          <div class="pub-chips"><span class="vc vc-iclr">ICLR 2026 Workshop</span><span style="font-family:var(--mono);font-size:10px;color:var(--text3);">Chain-of-Thought · Agentic</span></div>
+          <div class="pub-title">Variational Latent Reasoning Guided by Rendered Chain-of-Thought</div>
+          <div class="pub-authors">Fanmeng Wang, Haotian Liu, <strong>Guojiang Zhao</strong>, Hongteng Xu, Zhifeng Gao</div>
+          <div class="pub-actions"><a href="https://openreview.net/pdf?id=m797EiKdL9" class="pa pa-p" target="_blank">PDF</a><a href="https://github.com/FanmengWang/ReGuLaR" class="pa" target="_blank">Code</a></div>
+        </div>
+      </div>
+
+      <!-- LaPha Agentic RL -->
+      <div class="pub-card">
+        <div class="pub-img"><img src="https://545487677.github.io/images/papers/lapha.png" alt="LaPha"></div>
+        <div class="pub-body">
+          <div class="pub-chips"><span class="vc vc-pre">arXiv 2026</span><span style="font-family:var(--mono);font-size:10px;color:var(--text3);">Agentic RL</span></div>
+          <div class="pub-title">Latent Poincaré Shaping for Agentic Reinforcement Learning</div>
+          <div class="pub-authors">Hanchen Xia, Baoyou Chen, Zelin Zang, Yutang Ge, <strong>Guojiang Zhao</strong>, Siyu Zhu</div>
+          <div class="pub-actions"><a href="https://arxiv.org/abs/2602.09375" class="pa pa-p" target="_blank">PDF</a><a href="https://mp.weixin.qq.com/s/wS5nNRasJKkuTXtzqwzKKA" class="pa" target="_blank">Media</a></div>
+        </div>
+      </div>
+
+      <!-- Innovator-VL -->
+      <div class="pub-card">
+        <div class="pub-img"><img src="https://545487677.github.io/images/papers/innovator.png" alt="Innovator-VL"></div>
+        <div class="pub-body">
+          <div class="pub-chips"><span class="vc vc-pre">arXiv 2026</span><span style="font-family:var(--mono);font-size:10px;color:var(--text3);">Multimodal LLM · Scientific Discovery</span></div>
+          <div class="pub-title">Innovator-VL: A Multimodal Large Language Model for Scientific Discovery</div>
+          <div class="pub-authors">Zichen Wen, Boxue Yang, Shuang Chen, et al. (with <strong>Guojiang Zhao</strong>)</div>
+          <div class="pub-actions"><a href="https://arxiv.org/abs/2601.19325" class="pa pa-p" target="_blank">PDF</a></div>
+        </div>
+      </div>
+
+      <!-- T-star -->
+      <div class="pub-card">
+        <div class="pub-img"><img src="https://545487677.github.io/images/papers/tstar.png" alt="T-star"></div>
+        <div class="pub-body">
+          <div class="pub-chips"><span class="vc vc-pre">arXiv 2026</span><span style="font-family:var(--mono);font-size:10px;color:var(--text3);">Diffusion LM · Agentic RL</span></div>
+          <div class="pub-title">T⋆: Progressive Block Scaling for Masked Diffusion Language Models Through Trajectory Aware Reinforcement Learning</div>
+          <div class="pub-authors">Hanchen Xia, Baoyou Chen, Yutang Ge, <strong>Guojiang Zhao</strong>, Siyu Zhu</div>
+          <div class="pub-actions"><a href="https://arxiv.org/abs/2601.11214" class="pa pa-p" target="_blank">PDF</a></div>
+        </div>
+      </div>
+
+      <!-- Closed-Loop Laser -->
+      <div class="pub-card feat">
+        <div class="pub-img"><img src="https://545487677.github.io/images/papers/laservae.png" alt="Laser VAE"></div>
+        <div class="pub-body">
+          <div class="pub-chips"><span class="vc vc-pre">Preprint 2025</span><span style="font-family:var(--mono);font-size:10px;color:var(--text3);">AI4S · Materials</span></div>
+          <div class="pub-title">Closed-Loop AI Enables Organic Continuous-Wave Laser</div>
+          <div class="pub-authors">Yun-Tao Ding*, <strong>Guojiang Zhao*</strong>, Meng-Han Feng, Pei-Wei Si, Jin-Lin Qing, Hui-Qin Zhou, et al.</div>
+          <div class="pub-actions"><a href="https://www.researchsquare.com/article/rs-6802885/v1" class="pa pa-p" target="_blank">PDF</a><a href="https://github.com/545487677/Laser_Geo2Seq_VAE" class="pa" target="_blank">Code</a></div>
+        </div>
+      </div>
+
+      <!-- R3 ACL Oral -->
+      <div class="pub-card feat">
+        <div class="pub-img"><img src="https://545487677.github.io/images/papers/trlacl.png" alt="R3"></div>
+        <div class="pub-body">
+          <div class="pub-chips"><span class="vc vc-acl">TRL@ACL 2025</span><span class="vc vc-oral">Oral</span></div>
+          <div class="pub-title">R³: "This is My SQL, Are You With Me?" A Consensus-Based Multi-Agent System for Text-to-SQL Tasks</div>
+          <div class="pub-authors">Hanchen Xia, Feng Jiang, Naihao Deng, Cunxiang Wang, <strong>Guojiang Zhao</strong>, Rada Mihalcea, Yue Zhang</div>
+          <div class="pub-actions"><a href="https://aclanthology.org/2025.trl-1.4/" class="pa pa-p" target="_blank">PDF</a></div>
+        </div>
+      </div>
+
+      <!-- TNNLS 2024 GSSC -->
+      <div class="pub-card">
+        <div class="pub-img"><img src="https://545487677.github.io/images/papers/TNNLS_2024_GSSC_cover.PNG" alt="GSSC"></div>
+        <div class="pub-body">
+          <div class="pub-chips"><span class="vc vc-jour">TNNLS 2024</span><span style="font-family:var(--mono);font-size:10px;color:var(--text3);">SCI Q1 · IF 8.9 · CCF-B</span></div>
+          <div class="pub-title">Learning to Model Graph Structural Information on MLPs via Graph Structure Self-Contrasting</div>
+          <div class="pub-authors">Lirong Wu, Haitao Lin, <strong>Guojiang Zhao</strong>, Cheng Tan, Stan Z. Li</div>
+          <div class="pub-actions"><a href="https://ieeexplore.ieee.org/abstract/document/10699355" class="pa pa-p" target="_blank">PDF</a><a href="https://github.com/LirongWu/GSSC" class="pa" target="_blank">Code</a></div>
+        </div>
+      </div>
+
+      <!-- TKDE 2024 TGS -->
+      <div class="pub-card">
+        <div class="pub-img"><img src="https://545487677.github.io/images/papers/TKDE_2024_TGS_cover.PNG" alt="TGS"></div>
+        <div class="pub-body">
+          <div class="pub-chips"><span class="vc vc-jour">TKDE 2024</span><span style="font-family:var(--mono);font-size:10px;color:var(--text3);">SCI Q1 · IF 10.4 · CCF-A</span></div>
+          <div class="pub-title">A Teacher-Free Graph Knowledge Distillation Framework with Dual Self-Distillation</div>
+          <div class="pub-authors">Lirong Wu, Haitao Lin, Zhangyang Gao, <strong>Guojiang Zhao</strong>, Stan Z. Li</div>
+          <div class="pub-actions"><a href="https://ieeexplore.ieee.org/abstract/document/10476767" class="pa pa-p" target="_blank">PDF</a><a href="https://github.com/LirongWu/TGS" class="pa" target="_blank">Code</a></div>
+        </div>
+      </div>
+
+      <!-- Uni-QSAR -->
+      <div class="pub-card">
+        <div class="pub-img"><img src="https://545487677.github.io/images/papers/uniqsar.png" alt="Uni-QSAR"></div>
+        <div class="pub-body">
+          <div class="pub-chips"><span class="vc vc-pre">arXiv 2023</span><span style="font-family:var(--mono);font-size:10px;color:var(--text3);">Molecular Property · AutoML</span></div>
+          <div class="pub-title">Uni-QSAR: An Auto-ML Tool for Molecular Property Prediction</div>
+          <div class="pub-authors">Zhifeng Gao, Xiaohong Ji, <strong>Guojiang Zhao</strong>, Hongshuai Wang, Hang Zheng, Guolin Ke, Linfeng Zhang</div>
+          <div class="pub-actions"><a href="https://arxiv.org/pdf/2304.12239" class="pa pa-p" target="_blank">PDF</a></div>
+        </div>
+      </div>
+
+      <!-- TNNLS 2022 DCV -->
+      <div class="pub-card">
+        <div class="pub-img"><img src="https://545487677.github.io/images/papers/TNNLS_2022_DCV_cover.PNG" alt="DCV"></div>
+        <div class="pub-body">
+          <div class="pub-chips"><span class="vc vc-jour">TNNLS 2022</span><span style="font-family:var(--mono);font-size:10px;color:var(--text3);">SCI Q1 · IF 8.9 · CCF-B</span></div>
+          <div class="pub-title">Deep Clustering and Visualization for End-to-End High-Dimensional Data Analysis</div>
+          <div class="pub-authors">Lirong Wu, Lifan Yuan, <strong>Guojiang Zhao</strong>, Haitao Lin, Stan Z. Li</div>
+          <div class="pub-actions"><a href="https://ieeexplore.ieee.org/abstract/document/9732198/" class="pa pa-p" target="_blank">PDF</a><a href="https://github.com/LirongWu/DCV" class="pa" target="_blank">Code</a></div>
+        </div>
+      </div>
+
+      <!-- TMLR 2022 GNTPP -->
+      <div class="pub-card">
+        <div class="pub-img"><img src="https://545487677.github.io/images/papers/TMLR.png" alt="GNTPP"></div>
+        <div class="pub-body">
+          <div class="pub-chips"><span class="vc vc-jour">TMLR 2022</span></div>
+          <div class="pub-title">Exploring Generative Neural Temporal Point Process</div>
+          <div class="pub-authors">Haitao Lin, Lirong Wu, <strong>Guojiang Zhao</strong>, Pai Liu, Stan Z. Li</div>
+          <div class="pub-actions"><a href="https://openreview.net/forum?id=NPfS5N3jbL" class="pa pa-p" target="_blank">PDF</a><a href="https://github.com/EDAPINENUT/GNTPP" class="pa" target="_blank">Code</a></div>
+        </div>
+      </div>
+
+      <!-- ACL 2022 -->
+      <div class="pub-card">
+        <div class="pub-img"><img src="https://545487677.github.io/images/papers/ACL.png" alt="ACL 2022"></div>
+        <div class="pub-body">
+          <div class="pub-chips"><span class="vc vc-acl">ACL 2022</span><span style="font-family:var(--mono);font-size:10px;color:var(--text3);">CCF-A</span></div>
+          <div class="pub-title">Using Context-to-Vector with Graph Retrofitting to Improve Word Embeddings</div>
+          <div class="pub-authors">Jiangbin Zheng, Yile Wang, Ge Wang, Jun Xia, Yufei Huang, <strong>Guojiang Zhao</strong>, Yue Zhang, Stan Z. Li</div>
+          <div class="pub-actions"><a href="https://arxiv.org/pdf/2210.16848" class="pa pa-p" target="_blank">PDF</a></div>
+        </div>
+      </div>
+
+    </div>
+    <div style="margin-top:20px;font-family:var(--mono);font-size:12px;color:var(--text3);text-align:center;padding:16px;">
+      Full list → <a href="https://scholar.google.com/citations?user=uuqNt9cAAAAJ&hl=US" style="color:var(--amber3);text-decoration:none;" target="_blank">Google Scholar ↗</a>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section class="section" id="services">
+    <div class="sec-head"><div class="sec-tag">Academic Service &amp; Awards</div><div class="sec-line"></div></div>
+    <div class="services-grid">
+      <div class="srv-panel">
+        <div class="srv-title">Conference Reviewer</div>
+        <ul class="srv-list">
+          <li>ICLR <span class="srv-meta">CCF-A</span></li>
+          <li>ICML <span class="srv-meta">CCF-A</span></li>
+          <li>ACL <span class="srv-meta">CCF-A</span></li>
+          <li>AAAI <span class="srv-meta">CCF-A</span></li>
+        </ul>
+      </div>
+      <div class="srv-panel">
+        <div class="srv-title">Journal Reviewer</div>
+        <ul class="srv-list">
+          <li>Archives of Computational Methods in Engineering <span class="srv-meta">JCR Q1 · IF 11.9</span></li>
+        </ul>
+      </div>
+      <div class="srv-panel">
+        <div class="srv-title">Honors &amp; Awards</div>
+        <ul class="srv-list">
+          <li>European Good Design Award — Bronze <span class="srv-meta">2022</span></li>
+          <li>National Scholarship 国家奖学金 <span class="srv-meta">2019</span></li>
+          <li>Ranked 1st in Major (Mathematics Track) <span class="srv-meta">XUPT</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- VISITOR MAP -->
+  <section class="section" id="visitors" style="margin-bottom:40px;">
+    <div class="sec-head"><div class="sec-tag">Visitor Map</div><div class="sec-line"></div></div>
+    <div style="background:var(--panel);border:1px solid var(--border2);border-radius:6px;padding:24px 24px 18px;position:relative;overflow:hidden;">
+      <canvas id="worldMap" style="width:100%;height:auto;display:block;border-radius:4px;"></canvas>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px;flex-wrap:wrap;gap:8px;">
+        <div style="display:flex;gap:20px;flex-wrap:wrap;" id="mapLegend"></div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--text3);">
+          Live tracking → <a href="https://clustrmaps.com" target="_blank" style="color:var(--amber3);text-decoration:none;">clustrmaps.com</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="ft-l">© 2026 <strong>Guojiang Zhao</strong> — Beijing, China</div>
+    <div class="ft-r">cody545487677@gmail.com &nbsp;·&nbsp; guojianz@alumni.cmu.edu</div>
+  </footer>
+
+</div>
+
+<script>
+// ── Scroll-reveal ──────────────────────────────────────────────
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach((entry, i) => {
+    if (entry.isIntersecting) {
+      setTimeout(() => {
+        entry.target.style.animation = 'fadeUp 0.45s ease both';
+        entry.target.style.opacity = '1';
+      }, i * 40);
+      revealObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.05 });
+
+document.querySelectorAll('.news-row, .pub-card, .srv-panel, .stat-cell').forEach(el => {
+  el.style.opacity = '0';
+  revealObserver.observe(el);
+});
+
+// ── World Map Canvas ────────────────────────────────────────────
+(function() {
+  const canvas = document.getElementById('worldMap');
+  const ctx = canvas.getContext('2d');
+
+  // Simple Equirectangular world land polygons (simplified coastlines)
+  // Coordinates: [lon, lat] → mapped to canvas
+  const LAND = [
+    // North America
+    [[[-168,72],[-140,70],[-120,60],[-125,49],[-95,49],[-83,46],[-76,44],[-70,47],[-68,44],[-80,32],[-90,29],[-97,26],[-110,23],[-117,32],[-120,38],[-124,48],[-130,55],[-140,60],[-155,60],[-168,65],[-168,72]]],
+    // Greenland
+    [[[-55,83],[-20,83],[-18,76],[-30,68],[-45,60],[-55,65],[-55,83]]],
+    // South America
+    [[[-80,12],[-75,10],[-62,10],[-52,4],[-50,-5],[-35,-10],[-40,-22],[-50,-28],[-53,-34],[-68,-55],[-75,-50],[-80,-38],[-80,-10],[-80,12]]],
+    // Europe
+    [[[0,51],[8,55],[10,58],[20,60],[25,65],[28,70],[15,70],[10,63],[5,58],[0,51]]],
+    [[[-10,36],[0,36],[5,43],[15,47],[28,46],[35,42],[28,38],[20,37],[10,37],[-5,37],[-10,36]]],
+    // Africa
+    [[[0,37],[15,37],[35,30],[40,10],[40,-10],[30,-35],[20,-35],[15,-25],[0,-5],[-10,5],[-15,15],[-5,35],[0,37]]],
+    // Asia (simplified)
+    [[[30,70],[60,75],[80,70],[100,70],[140,70],[160,65],[140,55],[130,42],[125,30],[120,22],[100,10],[80,8],[65,22],[55,25],[40,38],[30,50],[30,70]]],
+    // Japan
+    [[[130,31],[132,34],[136,36],[141,41],[143,44],[140,44],[135,34],[130,31]]],
+    // Australia
+    [[[114,-22],[120,-20],[130,-13],[140,-15],[150,-23],[152,-28],[148,-38],[143,-38],[132,-35],[120,-33],[114,-26],[114,-22]]],
+    // UK
+    [[[-5,50],[2,51],[2,53],[0,57],[-4,58],[-6,56],[-3,53],[-5,50]]],
+    // Southeast Asia
+    [[[95,20],[100,14],[104,2],[110,-2],[115,4],[120,4],[125,10],[105,15],[95,20]]],
+    // New Zealand
+    [[[168,-46],[172,-44],[174,-38],[170,-36],[168,-38],[166,-44],[168,-46]]],
+  ];
+
+  // Visitor dots: [lon, lat, label, color, count, active]
+  const VISITORS = [
+    [116.4, 39.9,  'Beijing',       '#dbb96a', 420, true],
+    [-79.9, 40.4,  'Pittsburgh',    '#7aaccc', 280, true],
+    [-122.4, 37.8, 'San Francisco', '#7aaccc', 190, false],
+    [121.5, 31.2,  'Shanghai',      '#dbb96a', 310, false],
+    [103.8, 1.3,   'Singapore',     '#6db88a', 145, false],
+    [120.3, 30.3,  'Hangzhou',      '#dbb96a', 210, false],
+    [2.35,  48.85, 'Paris',         '#b87ae0', 88,  false],
+    [-0.12, 51.5,  'London',        '#b87ae0', 102, false],
+    [139.7, 35.7,  'Tokyo',         '#6db88a', 175, false],
+    [-43.2,-22.9,  'Rio',           '#c96a5a', 55,  false],
+    [37.6,  55.75, 'Moscow',        '#b87ae0', 67,  false],
+    [77.2,  28.6,  'Delhi',         '#6db88a', 134, false],
+    [151.2,-33.9,  'Sydney',        '#6db88a', 91,  false],
+    [-99.1, 19.4,  'Mexico City',   '#c96a5a', 48,  false],
+    [18.4,  59.3,  'Stockholm',     '#b87ae0', 74,  false],
+    [126.9, 37.6,  'Seoul',         '#6db88a', 158, false],
+  ];
+
+  const W = 1000, H = 480;
+  canvas.width  = W;
+  canvas.height = H;
+
+  function lonLatToXY(lon, lat) {
+    const x = (lon + 180) / 360 * W;
+    const y = (90 - lat) / 180 * H;
+    return [x, y];
+  }
+
+  // Pulse state
+  const pulses = VISITORS.map(() => ({ r: 0, alpha: 0, active: false, timer: Math.random() * 200 }));
+  let frame = 0;
+
+  function drawMap() {
+    // Background
+    ctx.fillStyle = '#0d1118';
+    ctx.fillRect(0, 0, W, H);
+
+    // Grid lines
+    ctx.strokeStyle = 'rgba(219,185,106,0.05)';
+    ctx.lineWidth = 0.5;
+    for (let lon = -180; lon <= 180; lon += 30) {
+      const [x] = lonLatToXY(lon, 0);
+      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
+    }
+    for (let lat = -90; lat <= 90; lat += 30) {
+      const [, y] = lonLatToXY(0, lat);
+      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+    }
+
+    // Draw land
+    LAND.forEach(polygon => {
+      polygon.forEach(ring => {
+        ctx.beginPath();
+        ring.forEach(([lon, lat], i) => {
+          const [x, y] = lonLatToXY(lon, lat);
+          i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+        });
+        ctx.closePath();
+        ctx.fillStyle   = 'rgba(180,160,100,0.10)';
+        ctx.strokeStyle = 'rgba(180,160,100,0.22)';
+        ctx.lineWidth   = 0.8;
+        ctx.fill();
+        ctx.stroke();
+      });
+    });
+
+    // Connection arcs from Beijing to others
+    const [bx, by] = lonLatToXY(116.4, 39.9);
+    VISITORS.slice(1).forEach(([lon, lat], i) => {
+      const [tx, ty] = lonLatToXY(lon, lat);
+      const mx = (bx + tx) / 2;
+      const my = Math.min(by, ty) - Math.abs(tx - bx) * 0.22;
+      const prog = ((frame * 0.4 + i * 37) % 180) / 180;
+      ctx.beginPath();
+      ctx.moveTo(bx, by);
+      ctx.quadraticCurveTo(mx, my, tx, ty);
+      ctx.strokeStyle = 'rgba(219,185,106,0.06)';
+      ctx.lineWidth = 0.8;
+      ctx.setLineDash([]);
+      ctx.stroke();
+
+      // Moving dot along arc
+      const t = prog;
+      const dotX = (1-t)*(1-t)*bx + 2*(1-t)*t*mx + t*t*tx;
+      const dotY = (1-t)*(1-t)*by + 2*(1-t)*t*my + t*t*ty;
+      ctx.beginPath();
+      ctx.arc(dotX, dotY, 1.5, 0, Math.PI*2);
+      ctx.fillStyle = 'rgba(219,185,106,0.55)';
+      ctx.fill();
+    });
+
+    // Draw visitor dots + pulses
+    VISITORS.forEach(([lon, lat, , color, count], i) => {
+      const [x, y] = lonLatToXY(lon, lat);
+      const p = pulses[i];
+      p.timer++;
+
+      if (p.timer > 120 + i * 15) {
+        p.timer = 0; p.r = 2; p.alpha = 0.9;
+      }
+      if (p.r > 0) {
+        p.r += 0.55; p.alpha -= 0.028;
+        if (p.alpha > 0) {
+          ctx.beginPath();
+          ctx.arc(x, y, p.r, 0, Math.PI * 2);
+          ctx.strokeStyle = color.replace(')', `,${p.alpha})`).replace('rgb(', 'rgba(').replace('#', '');
+          // simpler:
+          ctx.strokeStyle = hexToRgba(color, p.alpha);
+          ctx.lineWidth = 1;
+          ctx.stroke();
+        } else { p.r = 0; }
+      }
+
+      // Size by visit count
+      const r = 2.5 + Math.log(count) * 0.8;
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fillStyle = hexToRgba(color, 0.85);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(x, y, r + 1.5, 0, Math.PI * 2);
+      ctx.strokeStyle = hexToRgba(color, 0.25);
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    });
+
+    frame++;
+    requestAnimationFrame(drawMap);
+  }
+
+  function hexToRgba(hex, alpha) {
+    const r = parseInt(hex.slice(1,3), 16);
+    const g = parseInt(hex.slice(3,5), 16);
+    const b = parseInt(hex.slice(5,7), 16);
+    return `rgba(${r},${g},${b},${alpha})`;
+  }
+
+  drawMap();
+
+  // Legend
+  const regions = [
+    ['China', '#dbb96a'],
+    ['Americas', '#c96a5a'],
+    ['Europe', '#b87ae0'],
+    ['Asia-Pacific', '#6db88a'],
+    ['N. America', '#7aaccc'],
+  ];
+  const legend = document.getElementById('mapLegend');
+  regions.forEach(([name, color]) => {
+    const el = document.createElement('div');
+    el.style.cssText = `display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10px;color:var(--text3)`;
+    el.innerHTML = `<span style="width:8px;height:8px;border-radius:50%;background:${color};display:inline-block;flex-shrink:0"></span>${name}`;
+    legend.appendChild(el);
+  });
+})();
+</script>
+</body>
+</html>

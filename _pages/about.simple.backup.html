@@ -1,0 +1,229 @@
+---
+permalink: /
+title: "Guojiang Zhao"
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guojiang Zhao — LLM · Agents · AI4S</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:       #0a0a08;
+  --bg2:      #111110;
+  --bg3:      #181816;
+  --panel:    #131311;
+  --border:   rgba(220,185,100,0.18);
+  --border2:  rgba(220,185,100,0.08);
+  --amber:    #dbb96a;
+  --amber2:   #f0d080;
+  --amber3:   #b8943a;
+  --green:    #6db88a;
+  --blue:     #7aaccc;
+  --red:      #c96a5a;
+  --text:     #d4c9a8;
+  --text2:    #8a7d5c;
+  --text3:    #4a4336;
+  --white:    #f0e8d0;
+  --mono:     'IBM Plex Mono', monospace;
+  --serif:    'Instrument Serif', serif;
+  --sans:     'DM Sans', sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.75;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+  pointer-events: none; z-index: 0; opacity: 0.6;
+}
+
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(10,10,8,0.92);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border2);
+}
+.nav-inner {
+  max-width: 1100px; margin: 0 auto; padding: 0 28px;
+  height: 52px; display: flex; align-items: center; justify-content: space-between;
+}
+.nav-id {
+  font-family: var(--mono); font-size: 12px; color: var(--amber);
+  display: flex; align-items: center; gap: 10px;
+}
+.nav-id::before { content: '▶'; font-size: 8px; animation: blink 1.2s step-end infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+.nav-links { display: flex; gap: 28px; list-style: none; }
+.nav-links a {
+  font-family: var(--mono); font-size: 11px; color: var(--text2);
+  text-decoration: none; letter-spacing: 0.08em; text-transform: uppercase; transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--amber); }
+
+.wrap { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 0 28px; }
+
+/* HERO */
+.hero {
+  padding-top: 100px; padding-bottom: 72px;
+  display: grid; grid-template-columns: 1fr 340px; gap: 56px; align-items: start;
+}
+
+.terminal-window {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 8px; overflow: hidden;
+  box-shadow: 0 0 60px rgba(219,185,106,0.06), 0 20px 60px rgba(0,0,0,0.5);
+  position: sticky; top: 72px;
+}
+.terminal-bar {
+  background: var(--bg3); padding: 10px 16px;
+  display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--border2);
+}
+.dot { width: 11px; height: 11px; border-radius: 50%; }
+.dot-r { background: #c96a5a; } .dot-y { background: #c9a85a; } .dot-g { background: #6db88a; }
+.terminal-title {
+  font-family: var(--mono); font-size: 11px; color: var(--text3);
+  margin-left: auto; margin-right: auto; letter-spacing: 0.06em;
+}
+.terminal-body {
+  padding: 20px; font-family: var(--mono); font-size: 12.5px;
+  line-height: 1.9; min-height: 380px;
+}
+.t-prompt { color: var(--amber3); }
+.t-cmd { color: var(--amber); }
+.t-key { color: var(--blue); }
+.t-str { color: var(--green); }
+.t-dim { color: var(--text3); }
+.t-tag { color: var(--red); }
+.t-num { color: #c89ad0; }
+.t-line { display: block; }
+.cursor {
+  display: inline-block; width: 8px; height: 14px; background: var(--amber);
+  vertical-align: text-bottom; animation: blink 1s step-end infinite; margin-left: 2px;
+}
+.t-typed { overflow: hidden; white-space: nowrap; display: inline-block; }
+.t-typed-1 { animation: typeIn 0.5s steps(28) 0.3s both; }
+.t-typed-2 { animation: typeIn 0.7s steps(38) 1.0s both; }
+.t-typed-3 { animation: typeIn 0.5s steps(22) 1.9s both; }
+.t-typed-4 { animation: typeIn 0.8s steps(42) 2.6s both; }
+.t-typed-5 { animation: typeIn 0.5s steps(22) 3.6s both; }
+.t-typed-6 { animation: typeIn 0.7s steps(32) 4.3s both; }
+.t-fade    { animation: fadeUp 0.3s ease 5.2s both; }
+@keyframes typeIn { from { width: 0; } to { width: 100%; } }
+
+/* HERO TEXT */
+.hero-eyebrow {
+  font-family: var(--mono); font-size: 11px; color: var(--amber3);
+  letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 18px;
+  display: flex; align-items: center; gap: 12px;
+}
+.hero-eyebrow span { color: var(--text3); }
+.hero-name {
+  font-family: var(--serif);
+  font-size: clamp(52px, 6.5vw, 88px);
+  line-height: 0.92; letter-spacing: -0.01em; color: var(--white); margin-bottom: 6px;
+}
+.hero-name em { font-style: italic; color: transparent; -webkit-text-stroke: 1px var(--amber); }
+.hero-subtitle {
+  font-family: var(--mono); font-size: 12px; color: var(--text2);
+  letter-spacing: 0.06em; margin-bottom: 28px; line-height: 1.8;
+}
+.hero-subtitle .hi { color: var(--green); }
+.hero-bio {
+  font-size: 16px; font-weight: 300; color: var(--text); line-height: 1.85;
+  max-width: 520px; margin-bottom: 12px; text-align: justify;
+}
+.hero-bio strong { color: var(--white); font-weight: 500; }
+.hero-bio em { font-style: italic; color: var(--amber); }
+.hero-bio a { color: var(--amber); text-decoration: none; font-weight: 500; }
+.hero-bio a:hover { text-decoration: underline; }
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--text3); border-radius: 3px; }
+
+@media (max-width: 768px) {
+  .hero { grid-template-columns: 1fr; padding-top: 80px; }
+  .terminal-window { display: none; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <div class="nav-id">GUOJIANG_ZHAO.AGENT</div>
+    <ul class="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="mailto:cody545487677@gmail.com">Contact</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="wrap">
+  <section class="hero" id="about">
+    <div>
+      <div class="hero-eyebrow">Researcher @ DP Technology <span>// Beijing, China</span></div>
+      <h1 class="hero-name">Guojiang<br><em>Zhao</em></h1>
+      <div class="hero-subtitle">
+        <span class="hi">LLM Reasoning</span> · Self-Evolving Agents · AI for Science<br>
+        M.S. Carnegie Mellon University &nbsp;·&nbsp; B.S. XUPT (Ranked 1st)
+      </div>
+      <p class="hero-bio">
+        Hello! I am Guojiang Zhao (you can also call me Cody), currently working at DP Technology, where I am fortunate to be mentored by <a href="https://scholar.google.com/citations?user=uBo3SJcAAAAJ&hl=en" target="_blank"><strong>Zhifeng Gao</strong></a> and <a href="https://scholar.google.com/citations?user=M2qJgtoAAAAJ&hl=en" target="_blank"><strong>Guolin Ke</strong></a>. My research focuses on molecular design, large language models (LLMs) reasoning, and self-evolving agents.
+      </p>
+      <p class="hero-bio">
+        📧 Email: <a href="mailto:cody545487677@gmail.com">cody545487677@gmail.com</a>
+      </p>
+    </div>
+
+    <!-- TERMINAL CARD -->
+    <div class="terminal-window">
+      <div class="terminal-bar">
+        <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
+        <div class="terminal-title">agent_profile.py — running</div>
+      </div>
+      <div class="terminal-body">
+        <span class="t-line"><span class="t-prompt">❯ </span><span class="t-cmd t-typed t-typed-1">python agent_profile.py</span></span>
+        <span class="t-line"><span class="t-dim t-typed t-typed-2"># Initializing...</span></span>
+        <span class="t-line">&nbsp;</span>
+        <span class="t-line"><span class="t-key t-typed t-typed-3">name</span><span class="t-dim"> = </span><span class="t-str t-typed t-typed-4">"Guojiang Zhao (Cody)"</span></span>
+        <span class="t-line"><span class="t-key t-typed t-typed-5">role</span><span class="t-dim"> = </span><span class="t-str t-typed t-typed-6">"Researcher @ DP Tech"</span></span>
+        <span class="t-line t-fade"><span class="t-key">focus</span><span class="t-dim"> = [</span></span>
+        <span class="t-line t-fade">&nbsp;&nbsp;<span class="t-str">"LLM Reasoning"</span><span class="t-dim">,</span></span>
+        <span class="t-line t-fade">&nbsp;&nbsp;<span class="t-str">"Agents"</span><span class="t-dim">,</span></span>
+        <span class="t-line t-fade">&nbsp;&nbsp;<span class="t-str">"AI4S"</span><span class="t-dim">,</span></span>
+        <span class="t-line t-fade"><span class="t-dim">]</span></span>
+        <span class="t-line">&nbsp;</span>
+        <span class="t-line t-fade"><span class="t-prompt">❯ </span><span class="t-cmd">_</span><span class="cursor"></span></span>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function (e) {
+    e.preventDefault();
+    document.querySelector(this.getAttribute('href')).scrollIntoView({
+      behavior: 'smooth'
+    });
+  });
+});
+</script>
+</body>
+</html>
